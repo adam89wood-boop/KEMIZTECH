@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>apps. — file recovery tools</title>
+<meta name="description" content="OTGExplorer, OtgxDesktop, and Salvage — three tools for moving data off devices and pulling it back when it's gone.">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3918202059564315"
+     crossorigin="anonymous"></script>
+<style>
+  :root{
+    --bg:#0B0E13;
+    --surface:#12161D;
+    --surface-2:#171C25;
+    --border:#232933;
+    --text:#E7EAEE;
+    --text-muted:#8891A0;
+    --accent:#4FE6C3;
+    --accent-ink:#06211C;
+    --accent-2:#FF6B8B;
+    --accent-2-ink:#2B0610;
+    --radius:10px;
+    --font-display: ui-monospace, "Cascadia Code", "JetBrains Mono", "SF Mono", Consolas, monospace;
+    --font-body: ui-sans-serif, "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  :root[data-theme="light"]{
+    --bg:#F1F3F4;
+    --surface:#FFFFFF;
+    --surface-2:#E8EBED;
+    --border:#D7DBDE;
+    --text:#161A1F;
+    --text-muted:#565F6B;
+    --accent:#0E8E74;
+    --accent-ink:#FFFFFF;
+    --accent-2:#C83E5D;
+    --accent-2-ink:#FFFFFF;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#F1F3F4;
+      --surface:#FFFFFF;
+      --surface-2:#E8EBED;
+      --border:#D7DBDE;
+      --text:#161A1F;
+      --text-muted:#565F6B;
+      --accent:#0E8E74;
+      --accent-ink:#FFFFFF;
+      --accent-2:#C83E5D;
+      --accent-2-ink:#FFFFFF;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B0E13;
+    --surface:#12161D;
+    --surface-2:#171C25;
+    --border:#232933;
+    --text:#E7EAEE;
+    --text-muted:#8891A0;
+    --accent:#4FE6C3;
+    --accent-ink:#06211C;
+    --accent-2:#FF6B8B;
+    --accent-2-ink:#2B0610;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3{
+    font-family:var(--font-display);
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  p{margin:0;max-width:38em;}
+  a{color:inherit;}
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+  .eyebrow{
+    font-family:var(--font-display);
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+    text-transform:lowercase;
+    color:var(--text-muted);
+  }
+
+  /* ---------- nav ---------- */
+  header.site{
+    position:sticky;top:0;z-index:20;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  nav.wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:16px;padding-bottom:16px;
+  }
+  .logotype{
+    font-family:var(--font-display);
+    font-size:1rem;
+    letter-spacing:0.02em;
+    display:flex;align-items:center;gap:8px;
+  }
+  .logotype .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  .navlinks{display:flex;gap:22px;font-size:0.9rem;}
+  .navlinks a{text-decoration:none;color:var(--text-muted);}
+  .navlinks a:hover{color:var(--text);}
+  .theme-toggle{
+    font-family:var(--font-display);
+    font-size:0.78rem;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-muted);
+    border-radius:6px;
+    padding:6px 10px;
+    cursor:pointer;
+  }
+  .theme-toggle:hover{color:var(--text);border-color:color-mix(in srgb, var(--accent) 40%, var(--border));}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;border-bottom:1px solid var(--border);overflow:hidden;}
+  .hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0.5;}
+  .hero-inner{position:relative;padding:92px 0 76px;}
+  .hero h1{
+    font-size:clamp(2rem, 1.1rem + 3.4vw, 3.4rem);
+    line-height:1.08;
+    margin-top:14px;
+  }
+  .hero h1 .hl{color:var(--accent);}
+  .hero p.lede{
+    font-size:1.08rem;
+    color:var(--text-muted);
+    margin-top:20px;
+  }
+  .hero .apps-index{
+    display:flex;gap:10px;flex-wrap:wrap;
+    margin-top:36px;
+  }
+  .pill{
+    font-family:var(--font-display);
+    font-size:0.82rem;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text-muted);
+    border-radius:999px;
+    padding:8px 14px;
+    text-decoration:none;
+    transition:border-color .15s, color .15s;
+  }
+  .pill:hover{color:var(--text);border-color:color-mix(in srgb, var(--accent) 50%, var(--border));}
+
+  /* ---------- app sections ---------- */
+  .app{
+    padding:84px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .app-grid{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:56px;
+    align-items:center;
+  }
+  .app:nth-of-type(even) .app-grid{direction:rtl;}
+  .app:nth-of-type(even) .app-grid > *{direction:ltr;}
+  .app h2{font-size:clamp(1.5rem, 1rem + 1.6vw, 2.1rem);margin-top:10px;}
+  .app .tagline{font-size:1.05rem;color:var(--text);margin-top:16px;}
+  .app .desc{color:var(--text-muted);margin-top:14px;}
+  .feature-list{
+    list-style:none;margin:24px 0 0;padding:0;
+    display:grid;gap:9px;
+  }
+  .feature-list li{
+    font-size:0.92rem;color:var(--text-muted);
+    padding-left:20px;position:relative;
+  }
+  .feature-list li::before{
+    content:"";position:absolute;left:0;top:0.55em;
+    width:8px;height:1px;background:var(--accent-current, var(--accent));
+  }
+  .cta-row{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap;}
+  .btn{
+    font-family:var(--font-display);
+    font-size:0.85rem;
+    border-radius:7px;
+    padding:12px 18px;
+    text-decoration:none;
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid transparent;
+  }
+  .btn-primary{background:var(--accent-current, var(--accent));color:var(--accent-ink-current, var(--accent-ink));}
+  .btn-primary:hover{filter:brightness(1.07);}
+  .btn-ghost{border-color:var(--border);color:var(--text-muted);background:transparent;}
+  .btn-ghost:hover{color:var(--text);border-color:color-mix(in srgb, var(--accent) 50%, var(--border));}
+
+  /* device panels */
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .panel-head{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 14px;
+    border-bottom:1px solid var(--border);
+    font-family:var(--font-display);
+    font-size:0.76rem;
+    color:var(--text-muted);
+    background:var(--surface-2);
+  }
+  .panel-head .dots{display:flex;gap:6px;}
+  .panel-head .dots span{width:8px;height:8px;border-radius:50%;background:var(--border);}
+  .panel-body{padding:18px;font-family:var(--font-display);font-size:0.84rem;}
+
+  .file-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid color-mix(in srgb, var(--border) 60%, transparent);color:var(--text-muted);}
+  .file-row:last-child{border-bottom:none;}
+  .file-row .name{color:var(--text);}
+  .file-row .tag{font-size:0.72rem;opacity:0.8;}
+
+  .scan-line{display:flex;gap:10px;padding:5px 0;color:var(--text-muted);}
+  .scan-line .ok{color:var(--accent);}
+  .scan-line .cmd{color:var(--text);}
+
+  .progress-track{height:6px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin:14px 0 16px;}
+  .progress-fill{height:100%;width:63%;background:var(--accent);}
+
+  .swatch-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+  .swatch{aspect-ratio:1;border-radius:8px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;}
+  .swatch svg{width:60%;height:60%;}
+
+  /* ---------- footer ---------- */
+  footer{padding:56px 0 64px;}
+  .footer-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+  footer .note{color:var(--text-muted);font-size:0.88rem;max-width:34em;}
+  footer .contact{font-family:var(--font-display);font-size:0.86rem;color:var(--text-muted);}
+  footer .contact a{text-decoration:none;color:var(--text);}
+
+  @media (max-width: 760px){
+    .app-grid, .app:nth-of-type(even) .app-grid{
+      grid-template-columns:1fr;direction:ltr;
+    }
+    .hero-inner{padding:64px 0 52px;}
+    .navlinks{display:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero canvas{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="wrap">
+    <div class="logotype"><span class="dot"></span>apps.</div>
+    <div class="navlinks">
+      <a href="#otgexplorer">OTGExplorer</a>
+      <a href="#otgxdesktop">OtgxDesktop</a>
+      <a href="#salvage">Salvage</a>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light/dark theme">theme</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <canvas id="hexScan" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">// three small tools, one disk-level obsession</p>
+    <h1>Get data off devices.<br><span class="hl">Get it back when it's gone.</span></h1>
+    <p class="lede">OTGExplorer and OtgxDesktop move files off drives and cards. Salvage pulls them back after they've been deleted.</p>
+    <div class="apps-index">
+      <a class="pill" href="#otgexplorer">01 · OTGExplorer — Android</a>
+      <a class="pill" href="#otgxdesktop">02 · OtgxDesktop — Windows</a>
+      <a class="pill" href="#salvage">03 · Salvage — Windows</a>
+    </div>
+  </div>
+</section>
+
+<main>
+
+  <section class="app" id="otgexplorer">
+    <div class="wrap app-grid">
+      <div>
+        <p class="eyebrow">/dev/otg0 — android</p>
+        <h2>OTGExplorer</h2>
+        <p class="tagline">A file browser for the drives your phone normally can't see into properly.</p>
+        <p class="desc">Plug in a USB-OTG drive, an SD card reader, or a camera, and browse it like local storage — including RAW photo formats most file managers choke on. Built for photographers, field techs, and anyone who's tired of their phone pretending external storage doesn't exist.</p>
+        <ul class="feature-list">
+          <li>Native USB-OTG and SD card browsing</li>
+          <li>RAW photo format support (CR2, ARW, NEF and friends)</li>
+          <li>No desktop required — works straight off the device</li>
+          <li>Lightweight: a browser, not a bloated suite</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#" aria-label="Get OTGExplorer on Google Play">▶ Get it on Google Play</a>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div class="dots"><span></span><span></span><span></span></div>DCIM/100CANON</div>
+        <div class="panel-body">
+          <div class="file-row"><span class="name">IMG_0231.CR2</span><span class="tag">24.1 MB</span></div>
+          <div class="file-row"><span class="name">IMG_0232.CR2</span><span class="tag">23.8 MB</span></div>
+          <div class="file-row"><span class="name">IMG_0233.ARW</span><span class="tag">41.6 MB</span></div>
+          <div class="file-row"><span class="name">IMG_0234.JPG</span><span class="tag">6.2 MB</span></div>
+          <div class="file-row"><span class="name">IMG_0235.NEF</span><span class="tag">28.9 MB</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="app" id="otgxdesktop">
+    <div class="wrap app-grid">
+      <div>
+        <p class="eyebrow">C:\OtgxDesktop — windows</p>
+        <h2>OtgxDesktop</h2>
+        <p class="tagline">A fast Windows file browser that doesn't give up when a file goes missing.</p>
+        <p class="desc">Browse drives normally in the Drives tab, run a quick signature-carve on a suspect file or image in Recover, or step up to Deep Recovery for forensic-grade undelete when it actually matters. OtgxDesktop only asks for elevated access when Deep Recovery needs it — not for every click.</p>
+        <ul class="feature-list">
+          <li>Drives — a clean everyday file browser</li>
+          <li>Recover — quick pure signature carving on a file or disk image</li>
+          <li>Deep Recovery — forensic-grade undelete, powered by the Salvage engine</li>
+          <li>Runs at standard privilege; elevates only for Deep Recovery</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#" aria-label="Download OtgxDesktop for Windows">⇓ Download for Windows</a>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div class="dots"><span></span><span></span><span></span></div>Deep Recovery — scanning E:\</div>
+        <div class="panel-body">
+          <div class="progress-track"><div class="progress-fill"></div></div>
+          <div class="file-row"><span class="name">Recovered_0192.docx</span><span class="tag">intact</span></div>
+          <div class="file-row"><span class="name">Recovered_0193.xlsx</span><span class="tag">intact</span></div>
+          <div class="file-row"><span class="name">Recovered_0194.jpg</span><span class="tag">partial</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="app" id="salvage">
+    <div class="wrap app-grid">
+      <div>
+        <p class="eyebrow">salvage://core — windows, rust</p>
+        <h2>Salvage</h2>
+        <p class="tagline">The forensic engine underneath. NTFS, FAT32, exFAT — raw and unflinching.</p>
+        <p class="desc">Salvage reads volumes the way a forensic examiner would: direct $MFT parsing on NTFS, directory-tree undelete on FAT32 and exFAT, raw Windows volume access, and byte-accurate signature carving when there's no filesystem left to trust. A native Rust core keeps it fast; a CLI and a WinUI3 app sit on top for whichever way you need to work.</p>
+        <ul class="feature-list">
+          <li>Native Rust core — no managed-runtime overhead on the hot path</li>
+          <li>NTFS $MFT parsing with MACB forensic timeline reconstruction</li>
+          <li>FAT32 / exFAT / FAT12-16 directory-tree undelete</li>
+          <li>Marker-aware signature carving — JPEGs recover whole, not truncated</li>
+          <li>Headless CLI for scripted recovery, plus a full desktop app</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#" aria-label="Download Salvage for Windows">⇓ Download for Windows</a>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div class="dots"><span></span><span></span><span></span></div>salvage scan --target \\.\PhysicalDrive1</div>
+        <div class="panel-body">
+          <div class="scan-line"><span class="ok">✓</span><span class="cmd">[MFT]</span><span>184,203 records parsed</span></div>
+          <div class="scan-line"><span class="ok">✓</span><span class="cmd">[FAT32]</span><span>12 deleted entries recovered</span></div>
+          <div class="scan-line"><span class="ok">✓</span><span class="cmd">[CARVE]</span><span>42 JPEGs recovered, 0 truncated</span></div>
+          <div class="scan-line"><span class="ok">✓</span><span class="cmd">[TIMELINE]</span><span>MACB timeline built — 9,044 entries</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-grid">
+    <p class="note">Three tools built the way their jobs actually demand: honest about privilege escalation and honest about what's actually recoverable.</p>
+    <div class="contact">
+      contact: <a href="mailto:adam89wood@gmail.com">adam89wood@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // theme toggle
+  (function(){
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var stored = localStorage.getItem('theme');
+    if (stored) root.setAttribute('data-theme', stored);
+    btn.addEventListener('click', function(){
+      var current = root.getAttribute('data-theme') ||
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  })();
+
+  // hero hex-scan canvas: faint drifting hex-dump columns, a nod to raw sector reads
+  (function(){
+    var canvas = document.getElementById('hexScan');
+    if (!canvas || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var ctx = canvas.getContext('2d');
+    var hero = canvas.parentElement;
+    var cols = [];
+    var charset = '0123456789ABCDEF';
+
+    function resize(){
+      canvas.width = hero.clientWidth;
+      canvas.height = hero.clientHeight;
+      var colWidth = 22;
+      var count = Math.ceil(canvas.width / colWidth) + 2;
+      cols = [];
+      for (var i = 0; i < count; i++){
+        cols.push({
+          x: i * colWidth,
+          y: Math.random() * canvas.height,
+          speed: 0.15 + Math.random() * 0.35,
+          chars: Math.ceil(canvas.height / 18) + 4
+        });
+      }
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function draw(){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = '12px ui-monospace, Consolas, monospace';
+      cols.forEach(function(col){
+        col.y += col.speed;
+        if (col.y > canvas.height + col.chars * 18) col.y = -col.chars * 18;
+        for (var j = 0; j < col.chars; j++){
+          var yy = col.y - j * 18;
+          if (yy < -18 || yy > canvas.height + 18) continue;
+          var fade = 1 - j / col.chars;
+          ctx.fillStyle = 'rgba(79, 230, 195,' + (0.16 * fade).toFixed(3) + ')';
+          var ch = charset[Math.floor(Math.random() * charset.length)];
+          ctx.fillText(ch, col.x, yy);
+        }
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+</script>
+
+</body>
+</html>
